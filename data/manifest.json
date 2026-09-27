@@ -1,0 +1,8 @@
+{
+  "db_version": "1.0.4",
+  "updated": "2026-09-28",
+  "item_count": 642,
+  "sha256": "2cdfd05b8576b8c5e476158e436d8d6e1d66191939a9df7e3f1c949be0650e98",
+  "update_url": "",
+  "release_notes": "1.0.4: 全库准确性复核，合并96条重复/另录条目，统一数值冲突为purine_range，修正类别错误；总条目738->642（去重后），0未知"
+}
