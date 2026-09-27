@@ -309,12 +309,22 @@ textarea { width: 100%; padding: 12px; border: 1.5px solid var(--line-soft); bor
 .splash {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(160deg, #EAF3FF 0%, #F6FAFF 50%, #EEF5FF 100%);
+  background: linear-gradient(160deg, #EAF3FF 0%, #F0F7FF 35%, #F6FAFF 65%, #EEF5FF 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  transition: opacity 0.6s ease, visibility 0.6s ease;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
+  overflow: hidden;
+}
+.splash::before {
+  content: "";
+  position: absolute;
+  top: -20%; left: 50%;
+  transform: translateX(-50%);
+  width: 140%; height: 60%;
+  background: radial-gradient(ellipse at center, rgba(74,159,227,0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 .splash.hide {
   opacity: 0;
@@ -323,31 +333,47 @@ textarea { width: 100%; padding: 12px; border: 1.5px solid var(--line-soft); bor
 }
 .splash-content {
   text-align: center;
-  animation: splashFadeIn 0.8s ease;
+  animation: splashFadeIn 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  z-index: 1;
+  padding: 20px;
 }
 @keyframes splashFadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .splash-icon {
-  width: 96px;
-  height: 96px;
-  border-radius: 22px;
-  box-shadow: 0 8px 32px rgba(74,159,227,0.25);
-  margin-bottom: 20px;
+  width: 104px;
+  height: 104px;
+  border-radius: 26px;
+  box-shadow: 0 12px 40px rgba(74,159,227,0.22), 0 2px 8px rgba(31,58,95,0.06);
+  margin-bottom: 28px;
+  animation: splashFloat 3s ease-in-out infinite;
+}
+@keyframes splashFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 .splash-name {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   color: #1F3A5F;
-  margin: 0 0 8px 0;
-  letter-spacing: 2px;
+  margin: 0 0 14px 0;
+  letter-spacing: 4px;
+  text-shadow: 0 1px 3px rgba(74,159,227,0.1);
 }
 .splash-slogan {
-  font-size: 15px;
-  color: #5A7188;
+  font-size: 17px;
+  font-family: "Kaiti SC", "STKaiti", "楷体", "KaiTi", serif;
+  font-weight: 400;
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #4A9FE3 0%, #2E7D9B 50%, #5BA3CF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 1px 2px rgba(74,159,227,0.15));
 }
 .header-sub {
   display: block;
@@ -355,4 +381,5 @@ textarea { width: 100%; padding: 12px; border: 1.5px solid var(--line-soft); bor
   color: #5A7188;
   margin-top: 2px;
   letter-spacing: 0.5px;
+  font-family: "Kaiti SC", "STKaiti", "楷体", serif;
 }
