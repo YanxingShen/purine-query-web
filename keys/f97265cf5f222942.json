@@ -1,11 +1,11 @@
 {
-  "v": "1.0.4",
+  "v": "1.0.5",
   "h": "2cdfd05b8576b8c5e476158e436d8d6e1d66191939a9df7e3f1c949be0650e98",
   "exp": "2027-12-31",
-  "iat": 1790536052,
+  "iat": 1790541288,
   "typ": "full",
   "u": "https://yanxingshen.github.io/purine-query-web/",
-  "notes": "v1.0.5 正式发布码",
+  "notes": "v1.0.5 formal - glass UI + 264 knowledge + 6 Tab",
   "seq": 3,
-  "mac": "661f699cb98216683a43e3cab5b38a94a73a40b486a9282acf123be8cb255573"
+  "mac": "94a00aad5f556c108535bb5895975a9ea209ff4e5cbc5cf14af0c63d6797c81d"
 }
