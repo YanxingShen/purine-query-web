@@ -1,0 +1,270 @@
+/* ============================================================
+   嘌呤查询 App 样式 —— 移动端优先响应式
+   配色：绿色医疗风；嘌呤等级 绿/黄/橙/红/灰
+   ============================================================ */
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  background: #f4f7f5;
+  color: #233;
+  font-size: 15px;
+  line-height: 1.5;
+  padding-bottom: 64px; /* 给底部 tabbar 留位 */
+  padding-top: 56px;    /* 给顶部 header 留位 */
+}
+
+/* ---------- 顶部栏 ---------- */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: 56px;
+  background: #2e7d5b; color: #fff;
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 0 16px; z-index: 100;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+.app-header h1 { font-size: 18px; margin: 0; font-weight: 600; }
+.header-sub { font-size: 12px; opacity: .85; }
+
+/* ---------- 主区域：桌面端限宽 ---------- */
+#main { max-width: 800px; margin: 0 auto; padding: 12px; }
+
+/* ---------- 页面切换 ---------- */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ---------- 搜索框 ---------- */
+.search-box { margin: 4px 0 10px; }
+.search-box input {
+  width: 100%; padding: 12px 14px; font-size: 16px;
+  border: 1px solid #d4ded8; border-radius: 10px; background: #fff;
+  outline: none;
+}
+.search-box input:focus { border-color: #2e7d5b; box-shadow: 0 0 0 2px rgba(46,125,91,.15); }
+
+/* ---------- 等级筛选 chip ---------- */
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chip {
+  border: 1px solid #cfd8d3; background: #fff; color: #456;
+  padding: 6px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
+}
+.chip.active { background: #2e7d5b; color: #fff; border-color: #2e7d5b; }
+.chip.lv-低.active { background: #2e7d5b; }
+.chip.lv-中.active { background: #e0a800; border-color: #e0a800; }
+.chip.lv-高.active { background: #e07b24; border-color: #e07b24; }
+.chip.lv-极高.active { background: #c0392b; border-color: #c0392b; }
+.chip.lv-未知.active { background: #7f8c8d; border-color: #7f8c8d; }
+
+/* ---------- 大类筛选 ---------- */
+.cat-filter { background: #fff; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; border: 1px solid #e3ebe6; }
+.cat-filter summary { cursor: pointer; font-size: 13px; color: #567; }
+.cat-filter-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.cat-filter-list .chip { font-size: 12px; padding: 4px 10px; }
+
+.result-meta { font-size: 12px; color: #789; margin: 4px 2px 8px; }
+
+/* ---------- 食物列表 ---------- */
+.food-list { list-style: none; padding: 0; margin: 0; }
+.food-list li {
+  background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  border: 1px solid #e8efe9; cursor: pointer;
+}
+.food-list li:active { background: #f0f5f2; }
+.food-list .f-name { font-size: 15px; font-weight: 500; }
+.food-list .f-meta { font-size: 12px; color: #789; margin-top: 2px; }
+.food-list .f-right { text-align: right; }
+.food-list .f-val { font-size: 14px; font-weight: 600; }
+.f-tag {
+  display: inline-block; font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-top: 4px; color: #fff; letter-spacing: .5px;
+}
+.food-list .f-tag { font-size: 12px; padding: 2px 9px; }
+.food-list.compact li { padding: 10px 12px; }
+
+/* 等级色标 */
+.tag-低 { background: #1f8a4c; }
+.tag-中 { background: #e0a800; }
+.tag-高 { background: #d9681a; }
+.tag-极高 { background: #c0392b; }
+.tag-未知 { background: #7f8c8d; }
+.f-tag.tag-中 { color: #3f2d00; } /* 金底配深字，保证白字与高亮背景都清晰可读 */
+
+/* ---------- 分类浏览 ---------- */
+.section-tip { font-size: 12px; color: #789; margin: 4px 2px 10px; }
+.cat-group { background: #fff; border-radius: 10px; margin-bottom: 8px; border: 1px solid #e8efe9; overflow: hidden; }
+.cat-group > summary {
+  padding: 14px; cursor: pointer; font-weight: 600;
+  display: flex; justify-content: space-between; align-items: center;
+  list-style: none;
+}
+.cat-group > summary::-webkit-details-marker { display: none; }
+.cat-group .cat-count { font-size: 12px; color: #789; font-weight: normal; }
+.cat-group .food-list { padding: 0 8px 8px; }
+
+/* ---------- 记食 ---------- */
+.date-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.date-bar input[type=date] { flex: 1; padding: 10px; border: 1px solid #d4ded8; border-radius: 8px; font-size: 15px; }
+.day-nav { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #d4ded8; background: #fff; font-size: 20px; cursor: pointer; }
+
+.summary-card {
+  background: linear-gradient(135deg, #2e7d5b, #4aa880); color: #fff;
+  border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 12px;
+}
+.summary-num { font-size: 36px; font-weight: 700; line-height: 1.1; }
+.summary-unit { font-size: 13px; opacity: .9; }
+.summary-hint { margin-top: 8px; font-size: 13px; background: rgba(255,255,255,.18); display: inline-block; padding: 4px 12px; border-radius: 999px; }
+
+.log-list { list-style: none; padding: 0; margin: 12px 0 0; }
+.log-list li {
+  background: #fff; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px;
+  display: flex; justify-content: space-between; align-items: center; border: 1px solid #e8efe9;
+}
+.log-list .l-name { font-size: 14px; }
+.log-list .l-sub { font-size: 12px; color: #789; }
+.log-list .l-del { background: #fdecea; color: #c0392b; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 13px; }
+
+/* ---------- 工具 / 我的 ---------- */
+.tool-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid #e8efe9; }
+.tool-card h2 { font-size: 16px; margin: 0 0 10px; color: #2e7d5b; }
+.form-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.form-row.inline { flex-direction: row; align-items: center; gap: 10px; }
+.form-row label { font-size: 13px; color: #567; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.form-row.inline label { flex-direction: column; }
+.form-row input, .form-row textarea {
+  padding: 10px; border: 1px solid #d4ded8; border-radius: 8px; font-size: 15px; font-family: inherit;
+}
+.btn-row { display: flex; gap: 8px; margin-top: 10px; }
+.btn-primary {
+  background: #2e7d5b; color: #fff; border: none; padding: 12px 18px;
+  border-radius: 8px; font-size: 15px; cursor: pointer;
+}
+.btn-primary.full { width: 100%; }
+.btn-ghost {
+  background: #fff; color: #2e7d5b; border: 1px solid #2e7d5b; padding: 10px 14px;
+  border-radius: 8px; font-size: 14px; cursor: pointer;
+}
+.tool-result { margin-top: 10px; font-size: 14px; }
+.plain-list { padding-left: 20px; margin: 6px 0; }
+.plain-list li { margin-bottom: 4px; }
+.tip-text { font-size: 12px; color: #789; margin: 6px 0; }
+.disclaimer { font-size: 12px; color: #567; line-height: 1.6; }
+
+/* 饮水进度 */
+.water-progress { height: 14px; background: #e3ece7; border-radius: 999px; overflow: hidden; margin: 8px 0; }
+.water-bar { height: 100%; width: 0; background: linear-gradient(90deg, #4aa8d8, #2e7d5b); transition: width .3s; }
+.water-num { text-align: center; font-size: 14px; margin-bottom: 8px; }
+
+/* 知识库卡片 */
+.kb-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kb-card {
+  background: #f0f7f3; border-radius: 10px; padding: 14px 10px; text-align: center; cursor: pointer;
+  border: 1px solid #dcebe2;
+}
+.kb-card .ico { font-size: 24px; }
+.kb-card .t { font-size: 13px; margin-top: 4px; color: #345; }
+
+/* ---------- 弹窗 ---------- */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200;
+  display: none; align-items: flex-end; justify-content: center;
+}
+.modal-mask.show { display: flex; }
+.modal {
+  background: #fff; width: 100%; max-width: 560px;
+  border-radius: 14px 14px 0 0; max-height: 88vh; display: flex; flex-direction: column;
+}
+.modal-head {
+  padding: 14px 16px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+}
+.modal-head h3 { margin: 0; font-size: 17px; }
+.modal-close { background: none; border: none; font-size: 26px; color: #999; cursor: pointer; line-height: 1; }
+.modal-body { padding: 14px 16px; overflow-y: auto; }
+.modal-foot { padding: 12px 16px; border-top: 1px solid #eee; }
+
+.detail-row { margin-bottom: 8px; font-size: 14px; }
+.detail-row .k { color: #789; font-size: 12px; margin-right: 6px; }
+.big-val { font-size: 26px; font-weight: 700; color: #2e7d5b; }
+.big-val small { font-size: 13px; font-weight: normal; color: #789; }
+.sources-list { font-size: 12px; color: #789; padding-left: 18px; }
+
+.pick-form { margin-top: 10px; }
+.picked-name { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.pick-form label { display: block; font-size: 13px; color: #567; }
+.pick-form input { width: 100%; padding: 10px; border: 1px solid #d4ded8; border-radius: 8px; font-size: 15px; margin-top: 4px; }
+.hidden { display: none !important; }
+
+.article-content { font-size: 14px; line-height: 1.8; }
+.article-sources { font-size: 12px; color: #789; margin-top: 12px; }
+
+/* ---------- 底部 Tab ---------- */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 60px;
+  background: #fff; border-top: 1px solid #e3ebe6;
+  display: flex; z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab {
+  flex: 1; background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 11px; color: #889; gap: 2px; padding: 6px 0;
+}
+.tab .tab-ico { font-size: 20px; }
+.tab.active { color: #2e7d5b; font-weight: 600; }
+
+/* ---------- 分段切换（子 Tab） ---------- */
+.seg-tabs { display: flex; background: #e3ece7; border-radius: 10px; padding: 3px; margin-bottom: 12px; }
+.seg-tabs .seg {
+  flex: 1; border: none; background: transparent; padding: 8px 0; border-radius: 8px;
+  font-size: 14px; color: #567; cursor: pointer;
+}
+.seg-tabs .seg.active { background: #fff; color: #2e7d5b; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.seg-tabs.small .seg { font-size: 12px; padding: 6px 0; }
+
+/* ---------- 图表 ---------- */
+.chart-legend { display: flex; gap: 14px; font-size: 12px; color: #567; margin-top: 8px; flex-wrap: wrap; }
+.chart-legend .lg { display: inline-flex; align-items: center; gap: 4px; }
+.lg-line { display: inline-block; width: 16px; height: 0; border-top: 2px dashed #999; }
+.lg-line.l-ref { border-top-color: #2e7d5b; }
+.lg-line.l-diag { border-top-color: #c0392b; }
+.lg-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #2e7d5b; }
+.chart-tip { font-size: 12px; color: #789; margin-top: 6px; min-height: 16px; }
+
+/* 尿酸记录列表 */
+.uric-list { list-style: none; padding: 0; margin: 0; }
+.uric-list li {
+  background: #f6faf8; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.uric-list .u-val { font-size: 16px; font-weight: 600; color: #2e7d5b; }
+.uric-list .u-date { font-size: 12px; color: #789; }
+.uric-list .u-note { font-size: 12px; color: #567; }
+.uric-list .u-del { background: #fdecea; color: #c0392b; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+
+/* 密钥生成器 */
+.kg-meta { background: #f0f7f3; border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-bottom: 10px; }
+.kg-meta div { margin-bottom: 4px; }
+.kg-meta b { color: #2e7d5b; }
+
+/* ---------- 桌面端适配 ---------- */
+@media (min-width: 768px) {
+  body { font-size: 15px; }
+  .modal { border-radius: 14px; margin: auto; }
+  .kb-cards { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---------- 数据管理 / 密钥生成器 新增样式 ---------- */
+#adminList li { cursor: pointer; }
+#adminList li:hover { background: #f0f5f2; }
+#adminList li.editing { outline: 2px solid #2e7d5b; }
+.form-row select { padding: 10px; border: 1px solid #d4ded8; border-radius: 8px; font-size: 15px; }
+.form-row textarea { padding: 10px; border: 1px solid #d4ded8; border-radius: 8px; font-size: 14px; font-family: inherit; }
+
+/* QR 码 */
+#qrImg img, #qrImg canvas { display: block; }
+#qrBox { background: #fafafa; border-radius: 8px; padding: 6px; }
+
+/* 扫码视频 */
+#qrVideo { background: #000; max-height: 300px; object-fit: cover; }
+
+/* 三通道卡片提示色 */
+.tool-card h2 { position: relative; padding-left: 8px; border-left: 3px solid #2e7d5b; }

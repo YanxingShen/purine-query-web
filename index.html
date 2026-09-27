@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#2e7d5b">
+  <meta name="description" content="嘌呤查询与每日摄入估算工具（痛风/高尿酸血症饮食参考）">
+  <title>嘌呤查询 · 痛风饮食助手</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+  <header class="app-header">
+    <h1 id="appTitle">嘌呤查询</h1>
+    <span id="headerSub" class="header-sub"></span>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ 查询（手机+桌面共用） ============ -->
+    <section id="page-search" class="page active">
+      <div class="search-box">
+        <input type="search" id="searchInput" placeholder="输入食物名、拼音或首字母，如 虾 / xia / x" autocomplete="off">
+      </div>
+      <div class="chip-row" id="levelChips">
+        <button class="chip active" data-level="">全部</button>
+        <button class="chip lv-低" data-level="低">低</button>
+        <button class="chip lv-中" data-level="中">中</button>
+        <button class="chip lv-高" data-level="高">高</button>
+        <button class="chip lv-极高" data-level="极高">极高</button>
+        <button class="chip lv-未知" data-level="未知">未知</button>
+      </div>
+      <details class="cat-filter" id="catFilter">
+        <summary>选择大类筛选（点击展开）</summary>
+        <div class="cat-filter-list" id="catFilterList"></div>
+      </details>
+      <div class="result-meta" id="resultMeta"></div>
+      <ul class="food-list" id="searchList"></ul>
+
+      <!-- 分类浏览（折叠面板形式，与查询同页） -->
+      <div class="section-tip" style="margin-top:14px">按大类浏览：</div>
+      <div id="catBrowser"></div>
+    </section>
+
+    <!-- ============ 记食（手机端） ============ -->
+    <section id="page-log" class="page">
+      <div class="date-bar">
+        <button id="prevDay" class="day-nav">‹</button>
+        <input type="date" id="logDate">
+        <button id="nextDay" class="day-nav">›</button>
+      </div>
+      <div class="summary-card" id="logSummary">
+        <div class="summary-num" id="totalPurine">0</div>
+        <div class="summary-unit">mg 嘌呤摄入（累计）</div>
+        <div class="summary-hint" id="logHint">—</div>
+      </div>
+      <button class="btn-primary full" id="openAddFood">+ 添加食物</button>
+      <ul class="log-list" id="logList"></ul>
+    </section>
+
+    <!-- ============ 记录（手机端：饮水 + 尿酸） ============ -->
+    <section id="page-records" class="page">
+      <div class="seg-tabs">
+        <button class="seg active" data-seg="water">饮水</button>
+        <button class="seg" data-seg="uric">尿酸</button>
+      </div>
+
+      <!-- 饮水子页 -->
+      <div class="seg-pane" id="seg-water">
+        <div class="tool-card">
+          <h2>今日饮水</h2>
+          <div class="form-row inline">
+            <label>目标(ml)<input type="number" id="waterGoal" value="2000"></label>
+            <button class="btn-ghost" id="saveWaterGoal">保存目标</button>
+          </div>
+          <div class="water-progress"><div class="water-bar" id="waterBar"></div></div>
+          <div class="water-num"><span id="waterNow">0</span> / <span id="waterGoalShow">2000</span> ml</div>
+          <div class="btn-row">
+            <button class="btn-primary" data-addwater="100">+100</button>
+            <button class="btn-primary" data-addwater="250">+250</button>
+            <button class="btn-primary" data-addwater="500">+500</button>
+          </div>
+          <div class="form-row inline" style="margin-top:10px">
+            <label>自定义(ml)<input type="number" id="customWater" placeholder="如 300"></label>
+            <button class="btn-ghost" id="addCustomWater">添加</button>
+            <button class="btn-ghost" id="resetWater">清零</button>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <h2>最近 7 天饮水</h2>
+          <canvas id="waterChart" width="640" height="240" style="width:100%;height:auto"></canvas>
+        </div>
+
+        <div class="tool-card">
+          <h2>饮水提醒</h2>
+          <div class="form-row inline">
+            <label>开始<input type="time" id="notifyStart" value="09:00"></label>
+            <label>结束<input type="time" id="notifyEnd" value="21:00"></label>
+            <label>间隔(分)<input type="number" id="notifyGap" value="60"></label>
+          </div>
+          <button class="btn-primary full" id="enableNotify">开启浏览器提醒</button>
+          <p class="tip-text">开启后浏览器会在所选时间段内每隔 N 分钟弹出一次喝水提醒（页面需保持打开）。</p>
+        </div>
+      </div>
+
+      <!-- 尿酸子页 -->
+      <div class="seg-pane hidden" id="seg-uric">
+        <div class="tool-card">
+          <h2>记录血尿酸</h2>
+          <div class="form-row">
+            <label>尿酸值 (μmol/L)<input type="number" id="uricValue" placeholder="如 420"></label>
+            <label>日期<input type="date" id="uricDate"></label>
+            <label>备注<input type="text" id="uricNote" placeholder="如：空腹 / 服药后"></label>
+          </div>
+          <button class="btn-primary full" id="addUric">添加记录</button>
+        </div>
+
+        <div class="tool-card">
+          <h2>尿酸趋势</h2>
+          <div class="seg-tabs small" id="uricRange">
+            <button class="seg active" data-range="week">1周</button>
+            <button class="seg" data-range="month">1月</button>
+            <button class="seg" data-range="3month">3月</button>
+            <button class="seg" data-range="all">全部</button>
+          </div>
+          <canvas id="uricChart" width="640" height="280" style="width:100%;height:auto"></canvas>
+          <div class="chart-legend">
+            <span class="lg"><i class="lg-line l-ref"></i>360 目标</span>
+            <span class="lg"><i class="lg-line l-diag"></i>420 高尿酸线</span>
+            <span class="lg"><i class="lg-dot l-data"></i>实测值</span>
+          </div>
+          <div id="uricChartTip" class="chart-tip">点击数据点查看详情</div>
+        </div>
+
+        <div class="tool-card">
+          <h2>历史记录</h2>
+          <ul class="uric-list" id="uricList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 工具（手机端：BMI + 尿酸目标） ============ -->
+    <section id="page-tools" class="page">
+      <div class="tool-card">
+        <h2>BMI 计算器</h2>
+        <div class="form-row">
+          <label>身高 (cm)<input type="number" id="bmiHeight" placeholder="如 170"></label>
+          <label>体重 (kg)<input type="number" id="bmiWeight" placeholder="如 65"></label>
+        </div>
+        <button class="btn-primary" id="calcBmi">计算 BMI</button>
+        <div class="tool-result" id="bmiResult"></div>
+      </div>
+
+      <div class="tool-card">
+        <h2>血尿酸控制目标（参考）</h2>
+        <ul class="plain-list">
+          <li>一般痛风患者：&lt; <b>360 μmol/L</b></li>
+          <li>有痛风石 / 反复发作：&lt; <b>300 μmol/L</b></li>
+          <li>不建议长期低于 180 μmol/L</li>
+        </ul>
+        <p class="tip-text">以上为《中国高尿酸血症与痛风诊疗指南》推荐目标，具体请遵医嘱。</p>
+      </div>
+    </section>
+
+    <!-- ============ 我的（手机端） ============ -->
+    <section id="page-me" class="page">
+      <div class="tool-card">
+        <h2>数据库信息</h2>
+        <ul class="plain-list" id="dbInfo"></ul>
+      </div>
+
+      <div class="tool-card">
+        <h2>通道① · 在线自动更新（主通道）</h2>
+        <p class="tip-text">将应用部署到公网 HTTPS 静态地址后，打开即由 Service Worker 自动更新整个应用包，无需手动操作。未部署时使用本地嵌入数据。</p>
+        <ul class="plain-list" id="channel1Info"></ul>
+        <label style="font-size:13px;color:#567">托管地址（可选，留空则不检查）
+          <input type="url" id="hostUrl" placeholder="https://your-app.pages.dev">
+        </label>
+        <button class="btn-primary full" id="checkUpdate">检查更新</button>
+        <div id="channel1Result" class="tool-result"></div>
+      </div>
+
+      <div class="tool-card">
+        <h2>通道② · 密钥 / 扫码更新</h2>
+        <p class="tip-text">官方发放一次性密钥或二维码，扫码后需联网从地址下载更新包。二维码只承载地址+签名，不承载数据。</p>
+        <textarea id="updateKey" rows="2" placeholder="PUR-xxxx..."></textarea>
+        <div class="btn-row">
+          <button class="btn-primary" id="applyKey">更新</button>
+          <button class="btn-ghost" id="scanKey">扫码更新</button>
+        </div>
+        <!-- 扫码弹窗 -->
+        <div id="scannerBox" style="display:none;margin-top:10px">
+          <video id="qrVideo" style="width:100%;border-radius:8px"></video>
+          <div class="btn-row">
+            <button class="btn-ghost" id="stopScan">停止扫描</button>
+            <label class="btn-ghost" style="text-align:center;cursor:pointer">选择二维码图片
+              <input type="file" id="qrFile" accept="image/*" style="display:none">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <h2>通道③ · 离线包导入</h2>
+        <p class="tip-text">完全无网络时使用。离线包密钥内含 gzip 压缩的完整数据库，密钥极长（约 20 万字符），仅适合复制粘贴。</p>
+        <p class="tip-text">方式一：选择离线更新包 JSON 文件：</p>
+        <input type="file" id="offlineFile" accept="application/json,.json">
+        <p class="tip-text" style="margin-top:8px">方式二：在上方密钥框粘贴超长 PUR- 离线包密钥后点"更新"（自动识别 data 字段）。</p>
+      </div>
+
+      <div class="tool-card">
+        <h2>痛风知识库</h2>
+        <div id="knowledgeCards" class="kb-cards"></div>
+      </div>
+
+      <div class="tool-card">
+        <h2>免责声明</h2>
+        <p class="disclaimer" id="disclaimerText"></p>
+      </div>
+
+      <div class="tool-card">
+        <h2>诚实性总声明</h2>
+        <ol class="plain-list" id="honestyList"></ol>
+      </div>
+
+      <div class="tool-card">
+        <h2>关于</h2>
+        <p class="tip-text">本应用为纯前端 PWA，所有数据保存在本机浏览器中。嘌呤含量仅供饮食参考，不构成医疗建议。</p>
+        <p class="tip-text">数据来源：国家卫健委《成人高尿酸血症与痛风食养指南(2024年版)》（引《中国食物成分表》第6版）、WS/T 560-2017 等。</p>
+      </div>
+    </section>
+
+    <!-- ============ 数据管理（桌面端独有） ============ -->
+    <section id="page-admin" class="page">
+      <p class="tip-text">桌面端为官方数据管理端：浏览、编辑、新增、删除食物条目，完成后"保存为新版本"导出 JSON 用于发布更新。编辑仅在内存中进行，不影响嵌入的原始数据。</p>
+      <div class="tool-card">
+        <div class="form-row inline">
+          <input type="search" id="adminSearch" placeholder="搜索食物名/拼音…" style="flex:1;padding:10px;border:1px solid #d4ded8;border-radius:8px">
+          <select id="adminLevel" style="padding:10px;border:1px solid #d4ded8;border-radius:8px">
+            <option value="">全部等级</option>
+            <option>低</option><option>中</option><option>高</option><option>极高</option><option>未知</option>
+          </select>
+          <button class="btn-primary" id="adminNew">+ 新增条目</button>
+        </div>
+        <div class="result-meta" id="adminMeta"></div>
+        <ul class="food-list" id="adminList" style="max-height:400px;overflow-y:auto"></ul>
+      </div>
+      <div class="tool-card">
+        <h2>条目编辑</h2>
+        <div class="form-row">
+          <label>名称 <input type="text" id="edName"></label>
+          <label>别名（逗号分隔） <input type="text" id="edAliases"></label>
+          <label>大类 <input type="text" id="edCategory" list="catList"></label>
+          <datalist id="catList"></datalist>
+          <label>小类 <input type="text" id="edSub"></label>
+          <label>嘌呤 mg/100g <input type="number" id="edPurine" step="0.1"></label>
+          <label>等级
+            <select id="edLevel">
+              <option>低</option><option>中</option><option>高</option><option>极高</option><option>未知</option>
+            </select>
+          </label>
+          <label>食用状态 <input type="text" id="edPrep"></label>
+          <label>来源（每行一条） <textarea id="edSources" rows="3"></textarea></label>
+          <label>备注 <input type="text" id="edNote"></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="adminSaveEdit">保存到列表</button>
+          <button class="btn-ghost" id="adminDelete">删除此条目</button>
+          <button class="btn-ghost" id="adminClearForm">清空表单</button>
+        </div>
+      </div>
+      <div class="tool-card">
+        <h2>导出新版本</h2>
+        <p class="tip-text">自动将 db_version 末位 +0.0.1，updated 设为今天，导出为 purine-db-vX.Y.Z.json。</p>
+        <div class="kg-meta" id="adminExportMeta"></div>
+        <button class="btn-primary full" id="adminExport">保存为新版本并下载 JSON</button>
+      </div>
+    </section>
+
+    <!-- ============ 密钥生成器（桌面端） ============ -->
+    <section id="page-keygen" class="page">
+      <div class="tool-card">
+        <h2>嘌呤数据库更新密钥生成器</h2>
+        <p class="tip-text">此工具用于官方签发更新密钥。生成 <code>PUR-</code> 开头密钥，手机端输入或扫码即可更新数据库。</p>
+        <div class="seg-tabs" id="kgMode">
+          <button class="seg active" data-mode="online">通道② 在线密钥</button>
+          <button class="seg" data-mode="offline">通道③ 离线包</button>
+        </div>
+        <div class="form-row">
+          <label id="kgUrlLabel">下载地址 URL（新数据库 JSON 静态托管地址）
+            <input type="url" id="kgUrl" placeholder="https://example.com/purine-db-v1.1.0.json">
+          </label>
+          <label>过期日期 <input type="date" id="kgExp"></label>
+          <label>更新说明（可选） <input type="text" id="kgNotes" placeholder="如：v1.1.0 新增 50 条水产类数据"></label>
+        </div>
+        <p class="tip-text" id="kgModeHint" style="color:#2e7d5b">在线模式：密钥含下载地址，手机端扫码后需联网拉取更新包。</p>
+        <div class="kg-meta" id="kgMeta"></div>
+        <button class="btn-primary full" id="genKey">生成更新密钥</button>
+      </div>
+      <div class="tool-card" id="kgResultCard" style="display:none">
+        <h2>生成结果</h2>
+        <p class="tip-text">此密钥为官方更新密钥，发布后供手机端用户输入或扫码更新数据库。</p>
+        <textarea id="kgOutput" rows="4" readonly></textarea>
+        <div class="btn-row">
+          <button class="btn-primary" id="copyKey">复制密钥</button>
+          <button class="btn-ghost" id="genQr">生成二维码</button>
+          <button class="btn-ghost" id="clearKey">清空</button>
+        </div>
+        <div id="qrBox" style="text-align:center;margin-top:12px;display:none">
+          <div class="tip-text">用手机端"扫码更新"扫描下方二维码：</div>
+          <div id="qrImg" style="display:inline-block;padding:10px;background:#fff;border:1px solid #ddd;border-radius:8px"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 食物详情弹窗 -->
+  <div class="modal-mask" id="detailModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="dName"></h3>
+        <button class="modal-close" data-close="detailModal">×</button>
+      </div>
+      <div class="modal-body" id="dBody"></div>
+      <div class="modal-foot" id="dFoot">
+        <button class="btn-primary full" id="addToMeal">加入今日饮食</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加食物弹窗 -->
+  <div class="modal-mask" id="addFoodModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>添加食物</h3>
+        <button class="modal-close" data-close="addFoodModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="search-box">
+          <input type="search" id="pickSearch" placeholder="搜索食物选择…" autocomplete="off">
+        </div>
+        <ul class="food-list compact" id="pickList"></ul>
+        <div id="pickForm" class="pick-form hidden">
+          <div class="picked-name" id="pickedName"></div>
+          <label>摄入量 (g)<input type="number" id="pickGrams" value="100" min="1"></label>
+          <div class="btn-row">
+            <button class="btn-ghost" id="cancelPick">重选</button>
+            <button class="btn-primary" id="confirmPick">确认加入</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 知识库文章弹窗 -->
+  <div class="modal-mask" id="articleModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="aTitle"></h3>
+        <button class="modal-close" data-close="articleModal">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="aContent" class="article-content"></p>
+        <div id="aSources" class="article-sources"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 Tab 导航（JS 根据模式动态渲染） -->
+  <nav class="tabbar" id="tabbar"></nav>
+
+  <script src="data/purine-db.js"></script>
+  <script src="data/knowledge.js"></script>
+  <script src="data/pinyin-map.js"></script>
+  <!-- 第三方纯 JS 库（本地嵌入，PWA 离线可用） -->
+  <script src="lib/qrcode.min.js"></script>
+  <script src="lib/jsqr.js"></script>
+  <script src="lib/pako.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
