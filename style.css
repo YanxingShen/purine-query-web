@@ -305,3 +305,54 @@ textarea { width: 100%; padding: 12px; border: 1.5px solid var(--line-soft); bor
 .article-disclaimer::before {
   content: 'ℹ'; flex-shrink: 0; font-size: 14px; color: #8A9BB0;
 }
+/* ===== Splash Screen ===== */
+.splash {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(160deg, #EAF3FF 0%, #F6FAFF 50%, #EEF5FF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+.splash.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.splash-content {
+  text-align: center;
+  animation: splashFadeIn 0.8s ease;
+}
+@keyframes splashFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.splash-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(74,159,227,0.25);
+  margin-bottom: 20px;
+}
+.splash-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1F3A5F;
+  margin: 0 0 8px 0;
+  letter-spacing: 2px;
+}
+.splash-slogan {
+  font-size: 15px;
+  color: #5A7188;
+  margin: 0;
+  letter-spacing: 1px;
+}
+.header-sub {
+  display: block;
+  font-size: 12px;
+  color: #5A7188;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}

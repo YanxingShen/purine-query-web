@@ -1,6 +1,6 @@
 {
-  "name": "嘌呤无忧 - 痛风/高尿酸饮食助手",
-  "short_name": "嘌呤无忧",
+  "name": "清透控酸 - 痛风/高尿酸饮食助手",
+  "short_name": "清透控酸",
   "description": "食物嘌呤查询、每日嘌呤摄入估算、饮水与尿酸记录、健康知识科普",
   "lang": "zh-CN",
   "start_url": "./index.html",

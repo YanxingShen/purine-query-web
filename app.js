@@ -1641,3 +1641,15 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTab('search');
   registerSW();
 });
+
+// ===== Splash Screen =====
+(function initSplash() {
+  var splash = document.getElementById('splash');
+  if (!splash) return;
+  setTimeout(function () {
+    splash.classList.add('hide');
+    setTimeout(function () {
+      if (splash.parentNode) splash.parentNode.removeChild(splash);
+    }, 700);
+  }, 1500);
+})();
