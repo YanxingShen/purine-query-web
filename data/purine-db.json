@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "db_version": "1.0.4",
+  "db_version": "1.0.5",
   "updated": "2026-09-28",
   "unit": "mg/100g 可食部（生重，特殊标注除外）",
   "level_definition": {
